@@ -93,7 +93,7 @@ ___TEMPLATE_PARAMETERS___
         "name": "consent_mode_enabled",
         "checkboxText": "Enable Google Consent Mode support",
         "simpleValueType": true,
-        "defaultValue": true,
+        "defaultValue": false,
         "alwaysInSummary": true
       },
       {
@@ -203,6 +203,7 @@ const gtagSet = require('gtagSet');
 const injectScript = require('injectScript');
 const log = require('logToConsole');
 
+const version = '1.1';
 const trim = function(x) { return x.trim(); }; 
 
 if (data.consent_mode_enabled) {
@@ -225,7 +226,7 @@ if (data.consent_mode_enabled) {
     }
   });
 
-  defaultConsent.wait_for_update = 500;
+  defaultConsent.wait_for_update = 2000;
   setDefaultConsentState(defaultConsent);
 
   for (const prop in consentByRegion) {
@@ -235,11 +236,12 @@ if (data.consent_mode_enabled) {
   if (data.ads_data_redaction) {
     gtagSet('ads_data_redaction', true);
   }
-
-  gtagSet({
-    'cookiecode.config.consent_mode_enabled': true,
-  });
 }
+
+gtagSet({
+  'cookiecode.config.version': version,
+  'cookiecode.config.consent_mode_enabled': data.consent_mode_enabled
+});
 
 let url = 'https://cdn.cookiecode.nl/dist/latest.js?cc:mode=manual';
 if (data.language) {
@@ -574,7 +576,6 @@ scenarios: []
 
 ___NOTES___
 
-V1.0
-Initial version
+V1.1
 
 
