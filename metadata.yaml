@@ -1,5 +1,9 @@
 homepage: "https://www.cookiecode.nl"
 documentation: "https://portal.cookiecode.nl/"
 versions:
-  - sha: fe94870a2f911066ff5ffc5495d7c76a58a8344e 
+  # Latest version
+  - sha: 93cf4a48fbc33734e0d4375950335385d875b8cb
+    changeNotes: Update default values.
+  # Older versions
+  - sha: fe94870a2f911066ff5ffc5495d7c76a58a8344e
     changeNotes: Initial release.
