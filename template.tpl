@@ -197,14 +197,37 @@ ___TEMPLATE_PARAMETERS___
 
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
-const setDefaultConsentState = require('setDefaultConsentState');
-const updateConsentState = require('updateConsentState');
+const getContainerVersion = require('getContainerVersion');
 const gtagSet = require('gtagSet');
 const injectScript = require('injectScript');
-const log = require('logToConsole');
+const localStorage = require('localStorage');
+const JSON = require('JSON');
 
-const version = '1.1';
+const setDefaultConsentState = require('setDefaultConsentState');
+const updateConsentState = require('updateConsentState');
+const addConsentListener = require('addConsentListener');
+const isConsentGranted = require('isConsentGranted');
+
+const version = '1.2';
+const container = getContainerVersion();
 const trim = function(x) { return x.trim(); }; 
+
+const readConsentModeState = function() {
+  const rootData = JSON.parse(localStorage.getItem('GTMConsentModeState') || "{}");
+  return rootData[container.containerId] || null;
+};
+
+const writeConsentModeState = function() {
+  const rootData = JSON.parse(localStorage.getItem('GTMConsentModeState') || "{}");
+  rootData[container.containerId] = {
+    ad_storage: isConsentGranted('ad_storage') ? 'granted' : 'denied',
+    analytics_storage: isConsentGranted('analytics_storage') ? 'granted' : 'denied',
+    personalization_storage: isConsentGranted('personalization_storage') ? 'granted' : 'denied',
+    functionality_storage: isConsentGranted('functionality_storage') ? 'granted' : 'denied',
+    security_storage: isConsentGranted('security_storage') ? 'granted' : 'denied',
+  };
+  localStorage.setItem('GTMConsentModeState', JSON.stringify(rootData));
+};
 
 if (data.consent_mode_enabled) {
   const defaultConsent = {
@@ -236,6 +259,17 @@ if (data.consent_mode_enabled) {
   if (data.ads_data_redaction) {
     gtagSet('ads_data_redaction', true);
   }
+  
+  const currentState = readConsentModeState();
+  if (currentState) {
+    updateConsentState(currentState);
+  }
+  
+  addConsentListener('ad_storage', writeConsentModeState);
+  addConsentListener('analytics_storage', writeConsentModeState);
+  addConsentListener('personalization_storage', writeConsentModeState);
+  addConsentListener('functionality_storage', writeConsentModeState);
+  addConsentListener('security_storage', writeConsentModeState);
 }
 
 gtagSet({
@@ -289,7 +323,7 @@ ___WEB_PERMISSIONS___
                   },
                   {
                     "type": 8,
-                    "boolean": false
+                    "boolean": true
                   },
                   {
                     "type": 8,
@@ -320,7 +354,7 @@ ___WEB_PERMISSIONS___
                   },
                   {
                     "type": 8,
-                    "boolean": false
+                    "boolean": true
                   },
                   {
                     "type": 8,
@@ -351,7 +385,7 @@ ___WEB_PERMISSIONS___
                   },
                   {
                     "type": 8,
-                    "boolean": false
+                    "boolean": true
                   },
                   {
                     "type": 8,
@@ -382,7 +416,7 @@ ___WEB_PERMISSIONS___
                   },
                   {
                     "type": 8,
-                    "boolean": false
+                    "boolean": true
                   },
                   {
                     "type": 8,
@@ -413,7 +447,7 @@ ___WEB_PERMISSIONS___
                   },
                   {
                     "type": 8,
-                    "boolean": false
+                    "boolean": true
                   },
                   {
                     "type": 8,
@@ -496,27 +530,6 @@ ___WEB_PERMISSIONS___
   {
     "instance": {
       "key": {
-        "publicId": "logging",
-        "versionId": "1"
-      },
-      "param": [
-        {
-          "key": "environments",
-          "value": {
-            "type": 1,
-            "string": "all"
-          }
-        }
-      ]
-    },
-    "clientAnnotations": {
-      "isEditedByUser": true
-    },
-    "isRequired": true
-  },
-  {
-    "instance": {
-      "key": {
         "publicId": "write_data_layer",
         "versionId": "1"
       },
@@ -563,6 +576,69 @@ ___WEB_PERMISSIONS___
     },
     "clientAnnotations": {
       "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "access_local_storage",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "keys",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "GTMConsentModeState"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "read_container_data",
+        "versionId": "1"
+      },
+      "param": []
     },
     "isRequired": true
   }
