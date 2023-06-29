@@ -2,8 +2,10 @@ homepage: "https://www.cookiecode.nl"
 documentation: "https://portal.cookiecode.nl/"
 versions:
   # Latest version
+  - sha: 54dd4cb98e396018e23233d71066f50373e7c432
+    changeNotes: Store consent mode state.
+  # Older versions
   - sha: 93cf4a48fbc33734e0d4375950335385d875b8cb
     changeNotes: Update default values.
-  # Older versions
   - sha: fe94870a2f911066ff5ffc5495d7c76a58a8344e
     changeNotes: Initial release.
