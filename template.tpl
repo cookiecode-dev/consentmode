@@ -191,6 +191,42 @@ ___TEMPLATE_PARAMETERS___
       }
     ],
     "groupStyle": "ZIPPY_OPEN_ON_PARAM"
+  },
+  {
+    "type": "GROUP",
+    "name": "event_settings",
+    "displayName": "Additional custom events",
+    "groupStyle": "ZIPPY_OPEN_ON_PARAM",
+    "subParams": [
+      {
+        "type": "CHECKBOX",
+        "name": "trigger_event_ready",
+        "checkboxText": "Enable event: cookiecode.ready",
+        "simpleValueType": true,
+        "help": "This event is triggered after the initialization of CookieCode is complete."
+      },
+      {
+        "type": "CHECKBOX",
+        "name": "trigger_event_consent_all",
+        "checkboxText": "Enable event: cookiecode.constent_all",
+        "simpleValueType": true,
+        "help": "This event is triggered when consent to all services is granted at once (e.g. using the accept all button)."
+      },
+      {
+        "type": "CHECKBOX",
+        "name": "trigger_event_consent_none",
+        "checkboxText": "Enable event: cookiecode.consent_none",
+        "simpleValueType": true,
+        "help": "This event is triggered when consent to all services is denied at once (e.g. using the reject button)."
+      },
+      {
+        "type": "CHECKBOX",
+        "name": "trigger_event_consent_update",
+        "checkboxText": "Enable event: cookiecode.consent_update",
+        "simpleValueType": true,
+        "help": "This event is triggered when the consent state of an individual service has changed (e.g. using the preferences dialog)."
+      }
+    ]
   }
 ]
 
@@ -272,9 +308,16 @@ if (data.consent_mode_enabled) {
   addConsentListener('security_storage', writeConsentModeState);
 }
 
+const enabledEvents = [];
+if (data.trigger_event_ready) enabledEvents.push('ready');
+if (data.trigger_event_consent_all) enabledEvents.push('consent_all');
+if (data.trigger_event_consent_none) enabledEvents.push('consent_none');
+if (data.trigger_event_consent_update) enabledEvents.push('consent_update');
+
 gtagSet({
   'cookiecode.config.version': version,
-  'cookiecode.config.consent_mode_enabled': data.consent_mode_enabled
+  'cookiecode.config.consent_mode_enabled': data.consent_mode_enabled,
+  'cookiecode.config.events': enabledEvents
 });
 
 let url = 'https://cdn.cookiecode.nl/dist/latest.js?cc:mode=manual';
@@ -652,6 +695,6 @@ scenarios: []
 
 ___NOTES___
 
-V1.1
+V1.3
 
 
