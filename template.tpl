@@ -141,6 +141,14 @@ ___TEMPLATE_PARAMETERS___
                 {
                   "value": "security_storage",
                   "displayValue": "security_storage"
+                },
+                {
+                  "value": "ad_personalization",
+                  "displayValue": "ad_personalization"
+                },
+                {
+                  "value": "ad_user_data",
+                  "displayValue": "ad_user_data"
                 }
               ],
               "simpleValueType": true
@@ -177,7 +185,7 @@ ___TEMPLATE_PARAMETERS___
             "isUnique": false
           }
         ],
-        "help": "By default  \u003cem\u003ead_storage, analytics_storage\u003c/em\u003e and \u003cem\u003epersonalization_storage\u003c/em\u003e are set to denied in all regions.",
+        "help": "By default  \u003cem\u003ead_storage, analytics_storage, ad_personalization, ad_user_data\u003c/em\u003e and \u003cem\u003epersonalization_storage\u003c/em\u003e are set to denied in all regions.",
         "enablingConditions": [
           {
             "paramName": "consent_mode_enabled",
@@ -244,7 +252,7 @@ const updateConsentState = require('updateConsentState');
 const addConsentListener = require('addConsentListener');
 const isConsentGranted = require('isConsentGranted');
 
-const version = '1.2';
+const version = '2.0';
 const container = getContainerVersion();
 const trim = function(x) { return x.trim(); }; 
 
@@ -261,6 +269,8 @@ const writeConsentModeState = function() {
     personalization_storage: isConsentGranted('personalization_storage') ? 'granted' : 'denied',
     functionality_storage: isConsentGranted('functionality_storage') ? 'granted' : 'denied',
     security_storage: isConsentGranted('security_storage') ? 'granted' : 'denied',
+    ad_personalization: isConsentGranted('ad_personalization') ? 'granted' : 'denied',
+    ad_user_data: isConsentGranted('ad_user_data') ? 'granted' : 'denied',
   };
   localStorage.setItem('GTMConsentModeState', JSON.stringify(rootData));
 };
@@ -272,6 +282,8 @@ if (data.consent_mode_enabled) {
     personalization_storage: 'denied',
     functionality_storage: 'granted',
     security_storage: 'granted',
+    ad_personalization: 'granted',
+    ad_user_data: 'granted',
   };
 
   const consentByRegion = {};
@@ -306,6 +318,8 @@ if (data.consent_mode_enabled) {
   addConsentListener('personalization_storage', writeConsentModeState);
   addConsentListener('functionality_storage', writeConsentModeState);
   addConsentListener('security_storage', writeConsentModeState);
+  addConsentListener('ad_personalization', writeConsentModeState);
+  addConsentListener('ad_user_data', writeConsentModeState);    
 }
 
 const enabledEvents = [];
@@ -436,6 +450,68 @@ ___WEB_PERMISSIONS___
                   }
                 ]
               },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "consentType"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "ad_personalization"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },   
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "consentType"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "ad_user_data"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },                         
               {
                 "type": 3,
                 "mapKey": [
@@ -695,6 +771,6 @@ scenarios: []
 
 ___NOTES___
 
-V1.3
+V2.0
 
 
