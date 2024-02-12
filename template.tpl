@@ -251,8 +251,9 @@ const setDefaultConsentState = require('setDefaultConsentState');
 const updateConsentState = require('updateConsentState');
 const addConsentListener = require('addConsentListener');
 const isConsentGranted = require('isConsentGranted');
+const log = require('logToConsole');
 
-const version = '2.0';
+const version = '2.1';
 const container = getContainerVersion();
 const trim = function(x) { return x.trim(); }; 
 
@@ -282,8 +283,8 @@ if (data.consent_mode_enabled) {
     personalization_storage: 'denied',
     functionality_storage: 'granted',
     security_storage: 'granted',
-    ad_personalization: 'granted',
-    ad_user_data: 'granted',
+    ad_personalization: 'denied',
+    ad_user_data: 'denied',
   };
 
   const consentByRegion = {};
@@ -298,19 +299,24 @@ if (data.consent_mode_enabled) {
   });
 
   defaultConsent.wait_for_update = 2000;
-  setDefaultConsentState(defaultConsent);
-
-  for (const prop in consentByRegion) {
-    setDefaultConsentState(consentByRegion[prop]);
-  }
   
   if (data.ads_data_redaction) {
     gtagSet('ads_data_redaction', true);
   }
   
   const currentState = readConsentModeState();
+
+  log(currentState);
   if (currentState) {
+    log('updating consent state');
     updateConsentState(currentState);
+  } else {
+    log('setting default consent state');
+    setDefaultConsentState(defaultConsent);
+
+    for (const prop in consentByRegion) {
+      setDefaultConsentState(consentByRegion[prop]);
+    }
   }
   
   addConsentListener('ad_storage', writeConsentModeState);
