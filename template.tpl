@@ -299,9 +299,9 @@ if (data.consent_mode_enabled) {
   });
 
   defaultConsent.wait_for_update = 2000;
-  
+  log('ads_data_redaction: '+data.ads_data_redaction);
   if (data.ads_data_redaction) {
-    gtagSet('ads_data_redaction', true);
+    gtagSet({'ads_data_redaction': true});
   }
   
   const currentState = readConsentModeState();
@@ -667,6 +667,10 @@ ___WEB_PERMISSIONS___
               {
                 "type": 1,
                 "string": "cookiecode.*"
+              },
+              {
+                "type": 1,
+                "string": "ads_data_redaction"
               }
             ]
           }
