@@ -2,9 +2,11 @@ homepage: "https://www.cookiecode.nl"
 documentation: "https://portal.cookiecode.nl/"
 versions:
   # Latest version
+  - sha: 9a7d72fc6f6b1766a6569d553f71a7f90f3e0a42
+    changeNotes: Fixed permissions for ads_data_redaction
+  # Older versions
   - sha: 98845fee3c4c59b0ec5e33e6b7270cf4b0298ffa
     changeNotes: Improved support for consent mode v2
-  # Older versions
   - sha: ca1fc5e12ff1ac364f13792f089158316253c43c
     changeNotes: Consent mode v2 tags.
   - sha: 91aa6bf6e725b5ded33a411f7cea62d32fa6586f
