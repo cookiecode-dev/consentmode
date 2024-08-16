@@ -286,6 +286,7 @@ if (data.consent_mode_enabled) {
     ad_personalization: 'denied',
     ad_user_data: 'denied',
   };
+  defaultConsent.wait_for_update = 2000;
 
   const consentByRegion = {};
 
@@ -297,27 +298,26 @@ if (data.consent_mode_enabled) {
       defaultConsent[x.name] = x.value;
     }
   });
+  
+  log('setting default consent state');
+  setDefaultConsentState(defaultConsent);
 
-  defaultConsent.wait_for_update = 2000;
   log('ads_data_redaction: '+data.ads_data_redaction);
   if (data.ads_data_redaction) {
     gtagSet({'ads_data_redaction': true});
   }
   
+  for (const prop in consentByRegion) {
+    setDefaultConsentState(consentByRegion[prop]);
+  }
+
   const currentState = readConsentModeState();
 
   log(currentState);
   if (currentState) {
     log('updating consent state');
     updateConsentState(currentState);
-  } else {
-    log('setting default consent state');
-    setDefaultConsentState(defaultConsent);
-
-    for (const prop in consentByRegion) {
-      setDefaultConsentState(consentByRegion[prop]);
-    }
-  }
+  } 
   
   addConsentListener('ad_storage', writeConsentModeState);
   addConsentListener('analytics_storage', writeConsentModeState);
